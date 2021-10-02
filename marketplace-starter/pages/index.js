@@ -5,7 +5,7 @@ import axios from 'axios'
 import Web3Modal from "web3modal"
 
 import {
-  nftaddress, nftmarketaddress
+  nftaddress, nftmarketaddress, API_URL, RPC_URL
 } from '../config'
 
 import NFT from '../artifacts/contracts/NFT.sol/NFT.json'
@@ -19,7 +19,11 @@ export default function Home() {
   }, [])
   async function loadNFTs() {
    // write code to load nfts here 
-   const provider = new ethers.providers.JsonRpcProvider()
+   const network = "ropsten";
+  //  const provider = await ethers.providers.getDefaultProvider(API_URL)
+   const provider = ethers.getDefaultProvider(network, {
+      alchemy: API_URL
+   });
    const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider)
    const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, provider)
    const data = await marketContract.fetchMarketItems()
