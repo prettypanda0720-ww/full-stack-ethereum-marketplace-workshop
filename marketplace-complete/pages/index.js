@@ -5,7 +5,7 @@ import axios from 'axios'
 import Web3Modal from "web3modal"
 
 import {
-  nftaddress, nftmarketaddress
+  nftaddress, nftmarketaddress, API_URL, RPC_URL
 } from '../config'
 
 import NFT from '../artifacts/contracts/NFT.sol/NFT.json'

@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
-
+require('dotenv').config();
+const { API_URL, PRIVATE_KEY } = process.env;
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async () => {
@@ -22,8 +23,13 @@ task("accounts", "Prints the list of accounts", async () => {
     artifacts: './artifacts',
   },
   networks: {
-    hardhat: {
-      chainId: 1337
-    }
+    // hardhat: {
+    //   chainId: 1337
+    // }
+    ropsten: {
+      url: API_URL,
+      accounts: [`0x${PRIVATE_KEY}`],
+      timeout:350000,
+    },
   }
 };

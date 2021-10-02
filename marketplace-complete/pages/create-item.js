@@ -21,7 +21,7 @@ export default function Home() {
 
   async function createSale(url) {
     const web3Modal = new Web3Modal({
-      network: "mainnet",
+      network: "ropsten",
       cacheProvider: true,
     });
     const connection = await web3Modal.connect()
@@ -53,7 +53,7 @@ export default function Home() {
           progress: (prog) => console.log(`received: ${prog}`)
         }
       )
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`
+      const url = `https://gateway.pinata.cloud/ipfs/${added.path}`
       setFileUrl(url)
     } catch (error) {
       console.log('Error uploading file: ', error);
@@ -68,7 +68,7 @@ export default function Home() {
     })
     try {
       const added = await client.add(data)
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`
+      const url = `https://gateway.pinata.cloud/ipfs/${added.path}`
       createSale(url)
     } catch (error) {
       console.log('Error uploading file: ', error);
