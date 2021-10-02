@@ -21,6 +21,30 @@ export default function Home() {
 
   async function createSale(url) {
     // write code to create sale here
+    const listingPrice = web3.utils.toWei('0.01', 'ether')
+
+    contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
+    transaction = await contract.createMarketItem(nftaddress, tokenId, price, { value: listingPrice })
+    const web3Modal = new Web3Modal({
+      network: "mainnet",
+      cacheProvider: true,
+    });
+    const connection = await web3Modal.connect()
+    const provider = new ethers.providers.Web3Provider(connection)    
+    const signer = provider.getSigner()
+    
+    let contract = new ethers.Contract(nftaddress, NFT.abi, signer)
+    let transaction = await contract.createToken(url)
+    let tx = await transaction.wait()
+    let event = tx.events[0]
+    let value = event.args[2]
+    let tokenId = value.toNumber()
+    const price = web3.utils.toWei(formInput.price, 'ether')
+  
+    contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
+    transaction = await contract.createMarketItem(nftaddress, tokenId, price)
+    await transaction.wait()
+    router.push('/')
   }
   async function onChange(e) {
     const file = e.target.files[0];

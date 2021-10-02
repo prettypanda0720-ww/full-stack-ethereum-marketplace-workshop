@@ -19,9 +19,45 @@ export default function Home() {
   }, [])
   async function loadNFTs() {
    // write code to load nfts here 
+   const provider = new ethers.providers.JsonRpcProvider()
+   const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider)
+   const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, provider)
+   const data = await marketContract.fetchMarketItems()
+   
+   const items = await Promise.all(data.map(async i => {
+     const tokenUri = await tokenContract.tokenURI(i.tokenId)
+     const meta = await axios.get(tokenUri)
+     let price = web3.utils.fromWei(i.price.toString(), 'ether');
+     let item = {
+       price,
+       tokenId: i.tokenId.toNumber(),
+       seller: i.seller,
+       owner: i.owner,
+       image: meta.data.image,
+     }
+     return item
+   }))
+   setNfts(items)
+   setLoaded('loaded')
   }
   async function buyNft(nft) {
     // write code to buy nft here
+    const web3Modal = new Web3Modal({
+      network: "mainnet",
+      cacheProvider: true,
+    });
+    const connection = await web3Modal.connect()
+    const provider = new ethers.providers.Web3Provider(connection)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
+    
+    const price = web3.utils.toWei(nft.price.toString(), 'ether');
+    
+    const transaction = await contract.createMarketSale(nftaddress, nft.tokenId, {
+      value: price
+    })
+    await transaction.wait()
+    loadNFTs()
   }
   if (loaded === 'loaded' && !nfts.length) return (<h1 className="p-20 text-4xl">No NFTs!</h1>)
   return (
